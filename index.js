@@ -79,6 +79,6 @@ app.get("/", (req, res) => {
   res.send("yes");
 });
 const PORT = process.env.PORT || 8000;
-server.listen(3001, () => {
+server.listen(PORT, () => {
   console.log(`server is listening ${PORT} and front is on ${allowedFrontendHost}`);
 });
