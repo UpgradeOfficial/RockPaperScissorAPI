@@ -1,12 +1,100 @@
 const express = require("express");
-const app = express();
+const mongoose = require("mongoose");
 const http = require("http");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const { Server } = require("socket.io");
+const connectDB = require("./config/dbConfig");
+const corsOptions = require("./config/corsOptions");
+const cookieParser = require("cookie-parser");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJSDoc = require('swagger-jsdoc');
 
-app.use(cors());
+
+
+const options = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'RPC Game',
+      version: '1.0.0',
+    }
+  },
+  // Paths to files containing OpenAPI definitions
+  apis: ['./routes/**/*.js', './index.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+// routes imports
+const registerRoutes = require("./routes/auth/register");
+
+const app = express();
 const server = http.createServer(app);
+
+// Intial Connection To dataBase
+connectDB()
+// CORS Policy
+app.use(cors(corsOptions));
+// built in middle ware for json
+app.use(express.json());
+
+// middleware for cookies
+app.use(cookieParser());
+
+
+
+// custom routes
+app.use("/register", registerRoutes);
+
+app.use("/", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
+// catch all 
+app.all("*", (req, res) => {
+  // this will handle all the other routes to the page
+  // by default this will send a 200
+  // we need to chain in a status of 404
+  res.status(404);
+  if (req.accepts("html")) {
+    res.sendFile(path.join(__dirname, 'public', "views", "404.html"));
+  } else if (req.accepts("json")) {
+    res.json({ error: "404 not found!!!" });
+  } else {
+    res.type("txt").send("404 Not Found");
+  }
+  //sendFile()
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const gameObject = {
   participants: [],
@@ -75,10 +163,20 @@ io.on("connection", (socket) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.send("yes");
-});
+
 const PORT = process.env.PORT || 8000;
-server.listen(PORT, () => {
-  console.log(`server is listening ${PORT} and front is on ${allowedFrontendHost}`);
+
+mongoose.connection.once("open", () => {
+  console.log("Connected to mongodb");
+  server.listen(PORT, () => {
+    console.log(`server is listening ${PORT} and front is on ${allowedFrontendHost}`);
+  });
 });
+
+mongoose.connection.on("error", (err) => {
+  console.log("err Connected to mongodb");
+  console.log(err);
+});
+
+
+
