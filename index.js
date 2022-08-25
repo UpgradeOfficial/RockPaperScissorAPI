@@ -48,12 +48,14 @@ app.use(cookieParser());
 
 // custom routes
 // Allowed without access
-app.use("/", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
 app.use("/register", registerRoutes);
 app.use("/login", loginRoutes);
+app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // Access Only Routes
 app.use(verifyJWT);
 app.use("/user", userRoutes);
+
 
 
 
