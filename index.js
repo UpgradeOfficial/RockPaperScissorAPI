@@ -27,6 +27,9 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 // routes imports
 const registerRoutes = require("./routes/auth/register");
+const loginRoutes = require("./routes/auth/login");
+const userRoutes = require("./routes/user/userRoute");
+const verifyJWT = require("./middlewares/verifyJWT");
 
 const app = express();
 const server = http.createServer(app);
@@ -45,6 +48,9 @@ app.use(cookieParser());
 
 // custom routes
 app.use("/register", registerRoutes);
+app.use("/login", loginRoutes);
+app.use(verifyJWT);
+app.use("/user", userRoutes);
 
 app.use("/", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
@@ -118,9 +124,10 @@ const checkResult = (value1, value2) => {
   return 0;
 };
 const allowedFrontendHost=process.env.ALLOWED_FRONTEND_HOST
+console.log(allowedFrontendHost)
 const io = new Server(server, {
   cors: {
-    origin: allowedFrontendHost,
+    origin:allowedFrontendHost,
   },
 });
 
