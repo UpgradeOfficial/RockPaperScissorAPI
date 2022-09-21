@@ -1,6 +1,4 @@
-const allowFrontendHosts = require("../config/allowedOrigins")
-console.log(allowFrontendHosts[0])
-const allowedFrontendHost = allowFrontendHosts[0]
+const allowedFrontendHost = process.env.ALLOWEDFRONTENDHOST || "https://rock-paper-scissors-game-chi-ten.vercel.app"
 
 module.exports ={
     allowedFrontendHost
