@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const faqController = require('../controllers/faqController')
+const {getAllFaq, createNewFaq} = require('../controllers/FaqController')
 
 
 router.route('/faq')
-    .get(faqController.getAllFaq)
-    .post(faqController.createNewFaq)
-    // .delete(usersController.deleteUser)
+    .get(getAllFaq)
+    .post(createNewFaq)
+   
 
 module.exports = router
