@@ -68,6 +68,7 @@ app.all("*", (req, res) => {
 app.use(errorHandler);
 
 const { allowedFrontendHost } = require("./utils/literals");
+
 const { checkResult } = require("./utils/gameMethods");
 const io = new Server(server, {
   cors: {
